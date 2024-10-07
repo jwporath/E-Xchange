@@ -25,8 +25,70 @@
         </ul>
     </div>
     <div class="main">
-        
+    <div id="signin">
+            <form id="account" action="signup.php" method="post">
+                <input class="username" type="username" name="username" placeholder="Username">
+                <input class="password" type="password" name="password" placeholder="Password">
+                <input class="email" type="email" name="email" placeholder="email">
+                <input class="addressline1" type="addressline1" name="addressline1" placeholder="Address Line 1">
+                <input class="addressline2" type="addressline2" name="addressline2" placeholder="Address Line 2">
+                <input class="city" type="city" name="city" placeholder="City">
+                <input class="state" type="state" name="state" placeholder="State">
+                <input class="zipcode" type="zipcode" name="zipcode" placeholder="Zipcode">
+                <button class="btn btn-primary submit" type="submit">Sign Up</button>
+            </form>
+        </div>
     </div>
+
+    <?php
+
+        $servername="localhost";
+        $username="root";
+        $password="";
+        $database="E-Xchange";
+
+        $conn=new mysqli($servername,$username,$password,$database); // connect to E-Xchange database
+
+        if($conn->connect_error) // check for connection error
+        {
+            die("Connection failed: ".$conn->connect_error);
+        }
+
+        if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']) && isset($_POST['addressline1'])
+        && isset($_POST['city']) && isset($_POST['state']) && isset($_POST['zipcode']))
+        {
+            $username=$_POST['username'];
+            $password=$_POST['password'];
+            $email=$_POST['email'];
+            $addressline1=$_POST['addressline1'];
+            $addressline2=$_POST['addressline2'];
+            $city=$_POST['city'];
+            $state=$_POST['state'];
+            $zipcode=$_POST['zipcode'];
+
+            $query="SELECT * FROM users WHERE email='$email' OR username='$username'";
+            $result=$conn->query($query);
+
+            if($result->num_rows == 0)
+            {
+                $query="INSERT INTO users (username,password,email,addressline1,addressline2,city,state,zipcode) 
+                VALUES ('$username','$password','$email','$addressline1','$addressline2','$city','$state','$zipcode')";
+                $result=$conn->query($query);
+
+                echo "Sign-Up Successful";
+
+                header("Location: https://localhost/E-Xchange/index.php?username=$username");
+                $conn->close();
+                exit();
+            }
+            else
+            {
+                echo "Sign-Up Failed";
+                $conn->close();
+            }
+        }
+
+    ?>
 </body>
 
 </html>

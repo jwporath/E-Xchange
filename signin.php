@@ -25,8 +25,54 @@
         </ul>
     </div>
     <div class="main">
-        
+        <div id="signin">
+            <form id="account" action="signin.php" method="post">
+                <input class="username" type="username" name="username" placeholder="Username">
+                <input class="password" type="password" name="password" placeholder="Password">
+                <button class="btn btn-primary submit" type="submit">Sign In</button>
+            </form>
+        </div>
     </div>
+
+    <?php
+
+        $servername="localhost";
+        $username="root";
+        $password="";
+        $database="E-Xchange";
+
+        $conn=new mysqli($servername,$username,$password,$database); // connect to E-Xchange database
+
+        if($conn->connect_error) // check for connection error
+        {
+            die("Connection failed: ".$conn->connect_error);
+        }
+
+        if(isset($_POST['username']) && isset($_POST['password']))
+        {
+            $username=$_POST['username'];
+            $password=$_POST['password'];
+
+            $query="SELECT * FROM users WHERE username='$username' AND password='$password'";
+
+            $result=$conn->query($query);
+
+            if($result->num_rows > 0)
+            {
+                echo "Sign-In Successful";
+
+                header("Location: https://localhost/E-Xchange/index.php?username=$username");
+                $conn->close();
+                exit();
+            }
+            else
+            {
+                echo "Sign-In Failed";
+                $conn->close();
+            }
+        }
+
+    ?>
 </body>
 
 </html>
