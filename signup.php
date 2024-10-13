@@ -25,70 +25,87 @@
         </ul>
     </div>
     <div class="main">
-    <div id="signin">
-            <form id="account" action="signup.php" method="post">
-                <input class="username" type="username" name="username" placeholder="Username">
-                <input class="password" type="password" name="password" placeholder="Password">
-                <input class="email" type="email" name="email" placeholder="email">
-                <input class="addressline1" type="addressline1" name="addressline1" placeholder="Address Line 1">
-                <input class="addressline2" type="addressline2" name="addressline2" placeholder="Address Line 2">
-                <input class="city" type="city" name="city" placeholder="City">
-                <input class="state" type="state" name="state" placeholder="State">
-                <input class="zipcode" type="zipcode" name="zipcode" placeholder="Zipcode">
-                <button class="btn btn-primary submit" type="submit">Sign Up</button>
-            </form>
-        </div>
-    </div>
+        <form class="form" action="" method="post">
+            <h1 class="login-title">Registration</h1>
+            <input type="text" class="login-input" name="username" placeholder="Username" required />
+            <input type="password" class="login-input" name="password" placeholder="Password" required />
+            <input type="text" class="login-input" name="email" placeholder="Email@domain.com" required />
+            <input type="text" class="login-input" name="addressline1" placeholder="Address line 1" required>
+            <input type="text" class="login-input" name="addressline2" placeholder="Address line 2">
+            <input type="text" class="login-input" name="city" placeholder="City" required>
+            <input type="text" class="login-input" name="state" placeholder="State" required>
+            <input type="text" class="login-input" name="zipcode" placeholder="ZipCode" required>
+            <input type="submit" name="submit" value="Register" class="login-button">
+            <p class="link"><a href="signin.php">Click to Login</a></p>
+        </form>
+    
+        <?php
 
-    <?php
+            require('dbConnect.php');
 
-        $servername="localhost";
-        $username="root";
-        $password="";
-        $database="E-Xchange";
-
-        $conn=new mysqli($servername,$username,$password,$database); // connect to E-Xchange database
-
-        if($conn->connect_error) // check for connection error
-        {
-            die("Connection failed: ".$conn->connect_error);
-        }
-
-        if(isset($_POST['username']) && isset($_POST['password']) && isset($_POST['email']) && isset($_POST['addressline1'])
-        && isset($_POST['city']) && isset($_POST['state']) && isset($_POST['zipcode']))
-        {
-            $username=$_POST['username'];
-            $password=$_POST['password'];
-            $email=$_POST['email'];
-            $addressline1=$_POST['addressline1'];
-            $addressline2=$_POST['addressline2'];
-            $city=$_POST['city'];
-            $state=$_POST['state'];
-            $zipcode=$_POST['zipcode'];
-
-            $query="SELECT * FROM users WHERE email='$email' OR username='$username'";
-            $result=$conn->query($query);
-
-            if($result->num_rows == 0)
+            if(isset($_REQUEST['username']))
             {
-                $query="INSERT INTO users (username,password,email,addressline1,addressline2,city,state,zipcode) 
-                VALUES ('$username','$password','$email','$addressline1','$addressline2','$city','$state','$zipcode')";
+                // Extract and cleanup data
+                $username = stripslashes($_REQUEST['username']);
+                $username = mysqli_real_escape_string($conn, $username);
+                $password = stripslashes($_REQUEST['password']);
+                $password = mysqli_real_escape_string($conn, $password);
+                $email = stripslashes($_REQUEST['email']);
+                $email = mysqli_real_escape_string($conn, $email);
+                $addressline1 = stripslashes($_REQUEST['addressline1']);
+                $addressline1 = mysqli_real_escape_string($conn, $addressline1);
+                if(isset($_REQUEST['addressline2'])) // only use line 2 if user entered line 2
+                {
+                    $addressline2 = stripslashes($_REQUEST['addressline2']);
+                    $addressline2 = mysqli_real_escape_string($conn, $addressline2);
+                }
+                else
+                {
+                    $addressline2 = null;
+                }
+                $city = stripslashes($_REQUEST['city']);
+                $city = mysqli_real_escape_string($conn, $city);
+                $state = stripslashes($_REQUEST['state']);
+                $state = mysqli_real_escape_string($conn, $state);
+                $zipcode = stripslashes($_REQUEST['zipcode']);
+                $zipcode = mysqli_real_escape_string($conn, $zipcode);
+
+                // check if email or username are already in use
+                $query="SELECT * FROM users WHERE email='$email' OR username='$username'";
                 $result=$conn->query($query);
 
-                echo "Sign-Up Successful";
-
-                header("Location: https://localhost/E-Xchange/index.php?username=$username");
-                $conn->close();
-                exit();
+                if($result->num_rows == 0)
+                {
+                    $query="INSERT INTO users (username,password,email,addressline1,addressline2,city,state,zipcode) 
+                    VALUES ('$username','$password','$email','$addressline1','$addressline2','$city','$state','$zipcode')";
+                    
+                    $result=$conn->query($query);
+                    if ($result) // registration success
+                    {
+                        echo "<div class='form'>
+                            <h3>You are registered successfully.</h3><br/>
+                            <p class='link'>Click here to <a href='signin.php'>sign in.</a></p>
+                            </div>";
+                    } 
+                    else // registration failure
+                    {
+                        echo "<div class='form'>
+                            <h3>Required fields are missing.</h3><br/>
+                            <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
+                            </div>";
+                    }
+                }
+                else
+                {
+                    echo "<div class='form'>
+                        <h3>Username or Email already in use.</h3><br/>
+                        <p class='link'>Click here to <a href='signin.php'>sign in</a> instead.</p>
+                        </div>";
+                }
             }
-            else
-            {
-                echo "Sign-Up Failed";
-                $conn->close();
-            }
-        }
 
-    ?>
+        ?>
+    </div>
 </body>
 
 </html>
