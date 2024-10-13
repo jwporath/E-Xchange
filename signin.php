@@ -25,54 +25,43 @@
         </ul>
     </div>
     <div class="main">
-        <div id="signin">
-            <form id="account" action="signin.php" method="post">
-                <input class="username" type="username" name="username" placeholder="Username">
-                <input class="password" type="password" name="password" placeholder="Password">
-                <button class="btn btn-primary submit" type="submit">Sign In</button>
-            </form>
-        </div>
+        <form class="form" method="post" name="login">
+            <h1 class="login-title">Login</h1>
+            <input type="text" class="login-input" name="username" placeholder="Username" autofocus="true" required/>
+            <input type="password" class="login-input" name="password" placeholder="Password" required/>
+            <input type="submit" value="Login" name="submit" class="login-button"/>
+            <p class="link"><a href="registration.php">New Registration</a></p>
+        </form>
+        <?php
+            require('dbConnect.php');
+            session_start();
+
+            if(isset($_POST['username']))
+            {
+                $username = stripslashes($_REQUEST['username']);
+                $username = mysqli_real_escape_string($conn, $username);
+                $password = stripslashes($_REQUEST['password']);
+                $password = mysqli_real_escape_string($conn, $password);
+
+                $query="SELECT * FROM users WHERE username='$username' AND password='$password'";
+                $result=$conn->query($query);
+                $rows = mysqli_num_rows($result);
+                if ($rows == 1) 
+                {
+                    $_SESSION['username'] = $username;
+                    echo "<div class='form'>
+                          <h3>Sign in Successful.</h3><br/>";
+                } 
+                else 
+                {
+                    echo "<div class='form'>
+                          <h3>Incorrect Username/password.</h3><br/>
+                          <p class='link'>Click here to <a href='login.php'>Login</a> again.</p>
+                          </div>";
+                }
+            }
+        ?>
     </div>
-
-    <?php
-
-        $servername="localhost";
-        $username="root";
-        $password="";
-        $database="E-Xchange";
-
-        $conn=new mysqli($servername,$username,$password,$database); // connect to E-Xchange database
-
-        if($conn->connect_error) // check for connection error
-        {
-            die("Connection failed: ".$conn->connect_error);
-        }
-
-        if(isset($_POST['username']) && isset($_POST['password']))
-        {
-            $username=$_POST['username'];
-            $password=$_POST['password'];
-
-            $query="SELECT * FROM users WHERE username='$username' AND password='$password'";
-
-            $result=$conn->query($query);
-
-            if($result->num_rows > 0)
-            {
-                echo "Sign-In Successful";
-
-                header("Location: https://localhost/E-Xchange/index.php?username=$username");
-                $conn->close();
-                exit();
-            }
-            else
-            {
-                echo "Sign-In Failed";
-                $conn->close();
-            }
-        }
-
-    ?>
 </body>
 
 </html>
