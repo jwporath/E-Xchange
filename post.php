@@ -32,9 +32,11 @@
             <input type="text" class="login-input" name="value" placeholder="Value per Item" required />
             <input type="text" class="login-input" name="desireditem" placeholder="Desired Item" required>
             <input type="text" class="login-input" name="desiredquantity" placeholder="Quantity of Desired Item" required>
-            <br><input type="radio" name="partner">Partner 1
+            <br><p>Select a partner:</p>
+            <input type="radio" name="partner">Partner 1
             <br><input type="radio" name="partner">Partner 2
-            <br><br><input type="radio" name="recipient">Username
+            <br><br><p>Who is the recipient?</p>
+            <input type="radio" name="recipient">Username
             <br><input type="radio" name="recipient">Partner
             <input type="submit" name="submit" value="Register" class="login-button">
         </form>
