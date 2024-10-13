@@ -20,6 +20,7 @@
         <ul>
             <li><a href="index.php">Bulletin Board</a></li>
             <li><a href="post.php">Create a Post</a></li>
+            <li><a href="partnership.php">Add a Partner</a></li>
             <li><a href="signup.php">Sign Up</a></li>
             <li><a href="signin.php">Sign In</a></li>
         </ul>
@@ -29,7 +30,7 @@
             <h1 class="login-title">Sign In</h1>
             <input type="text" class="login-input" name="username" placeholder="Username" autofocus="true" required/>
             <input type="password" class="login-input" name="password" placeholder="Password" required/>
-            <input type="submit" value="Login" name="submit" class="login-button"/>
+            <input type="submit" value="Submit" name="submit" class="login-button"/>
             <p class="link"><a href="registration.php">New Registration</a></p>
         </form>
         <?php

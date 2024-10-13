@@ -20,6 +20,7 @@
         <ul>
             <li><a href="index.php">Bulletin Board</a></li>
             <li><a href="post.php">Create a Post</a></li>
+            <li><a href="partnership.php">Add a Partner</a></li>
             <li><a href="signup.php">Sign Up</a></li>
             <li><a href="signin.php">Sign In</a></li>
         </ul>
@@ -38,12 +39,13 @@
             <br><br><p>Who is the recipient?</p>
             <input type="radio" name="recipient">Username
             <br><input type="radio" name="recipient">Partner
-            <input type="submit" name="submit" value="Register" class="login-button">
+            <input type="submit" name="submit" value="Submit" class="login-button">
         </form>
     
         <?php
 
             require('dbConnect.php');
+            include("auth_session.php");
 
             if(isset($_REQUEST['username']))
             {

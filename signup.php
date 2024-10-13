@@ -20,6 +20,7 @@
         <ul>
             <li><a href="index.php">Bulletin Board</a></li>
             <li><a href="post.php">Create a Post</a></li>
+            <li><a href="partnership.php">Add a Partner</a></li>
             <li><a href="signup.php">Sign Up</a></li>
             <li><a href="signin.php">Sign In</a></li>
         </ul>
@@ -35,7 +36,7 @@
             <input type="text" class="login-input" name="city" placeholder="City" required>
             <input type="text" class="login-input" name="state" placeholder="State" required>
             <input type="text" class="login-input" name="zipcode" placeholder="ZipCode" required>
-            <input type="submit" name="submit" value="Register" class="login-button">
+            <input type="submit" name="submit" value="Submit" class="login-button">
             <p class="link"><a href="signin.php">Click to Login</a></p>
         </form>
     
