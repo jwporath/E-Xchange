@@ -49,7 +49,7 @@
 }
 
 .form {
-    margin: 50px auto;
+    margin: 0px auto;
     width: 500px;
     padding: 30px 25px;
     background: white;
@@ -68,7 +68,7 @@ h1.login-title {
     padding: 10px;
     margin-bottom: 25px;
     height: 25px;
-    width: calc(100% - 23px);
+    width: calc(100%);
 }
 .login-input:focus {
     border-color:#6e8095;

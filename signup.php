@@ -26,7 +26,7 @@
     </div>
     <div class="main">
         <form class="form" action="" method="post">
-            <h1 class="login-title">Registration</h1>
+            <h1 class="login-title">Sign Up</h1>
             <input type="text" class="login-input" name="username" placeholder="Username" required />
             <input type="password" class="login-input" name="password" placeholder="Password" required />
             <input type="text" class="login-input" name="email" placeholder="Email@domain.com" required />
