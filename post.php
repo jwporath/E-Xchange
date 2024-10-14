@@ -52,74 +52,147 @@
             <input type="text" class="login-input" name="value" placeholder="Value per Item" required />
             <input type="text" class="login-input" name="desireditem" placeholder="Desired Item" required>
             <input type="text" class="login-input" name="desiredquantity" placeholder="Quantity of Desired Item" required>
-            <br><p>Select a partner:</p>
-            <input type="radio" name="partner">Partner 1
-            <br><input type="radio" name="partner">Partner 2
-            <br><br><p>Who is the recipient?</p>
-            <input type="radio" name="recipient">Username
-            <br><input type="radio" name="recipient">Partner
-            <input type="submit" name="submit" value="Submit" class="login-button">
-        </form>
-    
-        <?php
-            if(isset($_REQUEST['username']))
-            {
-                // Extract and cleanup data
-                $username = stripslashes($_REQUEST['username']);
-                $username = mysqli_real_escape_string($conn, $username);
-                $password = stripslashes($_REQUEST['password']);
-                $password = mysqli_real_escape_string($conn, $password);
-                $email = stripslashes($_REQUEST['email']);
-                $email = mysqli_real_escape_string($conn, $email);
-                $addressline1 = stripslashes($_REQUEST['addressline1']);
-                $addressline1 = mysqli_real_escape_string($conn, $addressline1);
-                if(isset($_REQUEST['addressline2'])) // only use line 2 if user entered line 2
-                {
-                    $addressline2 = stripslashes($_REQUEST['addressline2']);
-                    $addressline2 = mysqli_real_escape_string($conn, $addressline2);
-                }
-                else
-                {
-                    $addressline2 = null;
-                }
-                $city = stripslashes($_REQUEST['city']);
-                $city = mysqli_real_escape_string($conn, $city);
-                $state = stripslashes($_REQUEST['state']);
-                $state = mysqli_real_escape_string($conn, $state);
-                $zipcode = stripslashes($_REQUEST['zipcode']);
-                $zipcode = mysqli_real_escape_string($conn, $zipcode);
 
-                // check if email or username are already in use
-                $query="SELECT * FROM users WHERE email='$email' OR username='$username'";
+            <?PHP
+                $username = $_SESSION['username'];
+
+                // get user's id
+                $query="SELECT * FROM users WHERE username='$username'";
                 $result=$conn->query($query);
 
-                if($result->num_rows == 0)
+                $row = mysqli_fetch_assoc($result);
+                $userid = $row['UserID'];
+
+                // find all partnerships
+                $query = "SELECT * FROM partnerships WHERE user1id='$userid' OR user2id='$userid'";
+                $result=$conn->query($query);
+
+                if($result->num_rows > 0)
                 {
-                    $query="INSERT INTO users (username,password,email,addressline1,addressline2,city,state,zipcode) 
-                    VALUES ('$username','$password','$email','$addressline1','$addressline2','$city','$state','$zipcode')";
-                    
+                    echo "<br><p>Select a partner:</p>";
+                    $row = mysqli_fetch_assoc($result);
+                    $partnerid = $row['User1ID'];
+                    if($partnerid == $userid)
+                    {
+                        $partnerid = $row['User2ID'];
+                    }
+
+                    $query="SELECT * FROM users WHERE userid='$partnerid'";
+                    $result1=$conn->query($query);
+
+                    $row = mysqli_fetch_assoc($result1);
+                    $partnername = $row['Username'];
+
+                    echo "<input type=\"radio\" name=\"partner\" value=\"$partnername\">$partnername";
+                    while($row = mysqli_fetch_assoc($result))
+                    {
+                        $partnerid = $row['User1ID'];
+                        if($partnerid == $userid)
+                        {
+                            $partnerid = $row['User2ID'];
+                        }
+
+                        $query="SELECT * FROM users WHERE userid='$partnerid'";
+                        $result1=$conn->query($query);
+
+                        $row = mysqli_fetch_assoc($result1);
+                        $partnername = $row['Username'];
+
+                        echo "<br><input type=\"radio\" name=\"partner\" value=\"$partnername\">$partnername";
+                    }
+                }
+            ?>
+            <input type="submit" name="submit" value="Submit" class="login-button">
+        </form>
+
+        <?PHP
+            if(isset($_POST['itemname']))
+            {
+                // save info
+                $itemname = stripslashes($_POST['itemname']);
+                $itemname = mysqli_real_escape_string($conn, $itemname);
+                $quantity = stripslashes($_POST['quantity']);
+                $quantity = mysqli_real_escape_string($conn, $quantity);
+                $value = stripslashes($_POST['value']);
+                $value = mysqli_real_escape_string($conn, $value);
+                $desireditem = stripslashes($_POST['desireditem']);
+                $desireditem = mysqli_real_escape_string($conn, $desireditem);
+                $desiredquantity = stripslashes($_POST['desiredquantity']);
+                $desiredquantity = mysqli_real_escape_string($conn, $desiredquantity);
+                if(isset($_POST['partner']))
+                {
+                    $partnername = $_POST['partner'];
+
+                    $query="SELECT * FROM users WHERE username='$partnername'";
                     $result=$conn->query($query);
-                    if ($result) // registration success
+
+                    $row = mysqli_fetch_assoc($result);
+                    $partnerid = $row['UserID'];
+
+                    $query="SELECT * FROM partnerships WHERE (user1id='$partnerid' AND user2id='$userid') OR (user1id='$userid' AND user2id='$partnerid')";
+                    $result=$conn->query($query);
+
+                    $row = mysqli_fetch_assoc($result);
+                    $partnershipid = $row['PartnershipID'];
+
+                    // show second form 
+                    echo "<form class=\"form\" action=\"\" method=\"post\">
+                        <h1 class=\"login-title\">Who is the recipient?</h1>
+                        <input type=\"radio\" name=\"recipient\" value=\"me\">Me
+                        <br><input type=\"radio\" name=\"recipient\" value=\"mypartner\">My partner
+                        <input type=\"submit\" name=\"submit\" value=\"Submit\" class=\"login-button\">
+                        </form>";
+
+                    if(isset($_POST['recipient']))
                     {
-                        echo "<div class='form'>
-                            <h3>You are registered successfully.</h3><br/>
-                            <p class='link'>Click here to <a href='signin.php'>sign in.</a></p>
-                            </div>";
-                    } 
-                    else // registration failure
-                    {
-                        echo "<div class='form'>
-                            <h3>Required fields are missing.</h3><br/>
-                            <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
-                            </div>";
+                        if($_POST['recipient'] == "me")
+                        {
+                            $partnerisrecipient = 0;
+                        }
+                        else
+                        {
+                            $partnerisrecipient = 1;
+                        }
+
+                        $query="INSERT INTO posts (itemname,quantity,value,desireditem,desiredquantity,partnershipid,hasmatch,partnerisrecipient) 
+                        VALUES ('$itemname','$quantity','$value','$desireditem','$desiredquantity','$partnershipid','0','$partnerisrecipient')";
+                        
+                        $result=$conn->query($query);
+                        if ($result) // post created
+                        {
+                            echo "<div class='form'>
+                                <h3>Post created.</h3><br/>
+                                </div>";
+                        } 
+                        else // failed to create post
+                        {
+                            echo "<div class='form'>
+                                <h3>Failed to create post.</h3><br/>
+                                </div>";
+                        }
                     }
                 }
                 else
                 {
-                    echo "<div class='form'>
-                        <h3>Username or Email already in use.</h3><br/>
-                        <p class='link'>Click here to <a href='signin.php'>sign in</a> instead.</p>
-                        </div>";
+                    $partnerisrecipient = 0;
+                    $partnershipid = null;
+
+                    $query="INSERT INTO posts (itemname,quantity,value,desireditem,desiredquantity,partnershipid,hasmatch,partnerisrecipient) 
+                    VALUES ('$itemname','$quantity','$value','$desireditem','$desiredquantity','$partnershipid','0','$partnerisrecipient')";
+                    
+                    $result=$conn->query($query);
+                    if ($result) // post created
+                    {
+                        echo "<div class='form'>
+                            <h3>Post created.</h3><br/>
+                            </div>";
+                    } 
+                    else // failed to create post
+                    {
+                        echo "<div class='form'>
+                            <h3>Failed to create post.</h3><br/>
+                            </div>";
+                    }
                 }
             }
 

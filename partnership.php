@@ -74,21 +74,31 @@
                     $row = mysqli_fetch_assoc($result);
                     $user1id =$row['UserID'];
 
-                    $query="INSERT INTO partnerships(user1id,user2id,confirmed) VALUES ($user1id,$user2id,TRUE);";
-                    
+                    // check is partnership already exists
+                    $query="SELECT * FROM partnerships WHERE (user1id='$user1id' AND user2id=$user2id) OR (user1id='$user2id' AND user2id=$user1id)";
                     $result=$conn->query($query);
-                    if ($result) // partner added successfully
+                    if ($result->num_rows == 0) // partnership does not exist
                     {
-                        echo "<div class='form'>
-                              <h3>Partnership added successfully.</h3><br/>
-                              <p class='link'>Click here to <a href='signin.php'>sign in.</a></p>
-                              </div>";
+                        $query="INSERT INTO partnerships(user1id,user2id,confirmed) VALUES ($user1id,$user2id,TRUE);";
+                    
+                        $result=$conn->query($query);
+                        if ($result) // partner added successfully
+                        {
+                            echo "<div class='form'>
+                                <h3>Partnership added successfully.</h3><br/>
+                                </div>";
+                        } 
+                        else // partnership failed
+                        {
+                            echo "<div class='form'>
+                                <h3>Failed to add partner.</h3><br/>
+                                </div>";
+                        }
                     } 
-                    else // partnership failed
+                    else // partnership already exists
                     {
                         echo "<div class='form'>
-                              <h3>Required fields are missing.</h3><br/>
-                              <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
+                              <h3>You are already a partner with this person.</h3><br/>
                               </div>";
                     }
                 }
