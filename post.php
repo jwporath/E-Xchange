@@ -67,7 +67,7 @@
                 $query = "SELECT * FROM partnerships WHERE user1id='$userid' OR user2id='$userid'";
                 $result=$conn->query($query);
 
-                if($result->num_rows > 0)
+                if($result->num_rows > 0) // print first partner and prompt
                 {
                     echo "<br><p>Select a partner:</p>";
                     $row = mysqli_fetch_assoc($result);
@@ -84,7 +84,7 @@
                     $partnername = $row['Username'];
 
                     echo "<input type=\"radio\" name=\"partner\" value=\"$partnername\">$partnername";
-                    while($row = mysqli_fetch_assoc($result))
+                    while($row = mysqli_fetch_assoc($result)) // print all other partners (if any)
                     {
                         $partnerid = $row['User1ID'];
                         if($partnerid == $userid)
@@ -102,6 +102,9 @@
                     }
                 }
             ?>
+            <br><br><p>Select a recipient:</p>
+            <input type="radio" name="recipient" value="me" required>Me
+            <br><input type="radio" name="recipient" value="mypartner" required>My partner
             <input type="submit" name="submit" value="Submit" class="login-button">
         </form>
 
@@ -119,6 +122,15 @@
                 $desireditem = mysqli_real_escape_string($conn, $desireditem);
                 $desiredquantity = stripslashes($_POST['desiredquantity']);
                 $desiredquantity = mysqli_real_escape_string($conn, $desiredquantity);
+                if($_POST['recipient'] != "me")
+                {
+                    $partnerisrecipient = 1;
+                }
+                else
+                {
+                    $partnerisrecipient = 0;
+                }
+                
                 if(isset($_POST['partner']))
                 {
                     $partnername = $_POST['partner'];
@@ -134,65 +146,28 @@
 
                     $row = mysqli_fetch_assoc($result);
                     $partnershipid = $row['PartnershipID'];
-
-                    // show second form 
-                    echo "<form class=\"form\" action=\"\" method=\"post\">
-                        <h1 class=\"login-title\">Who is the recipient?</h1>
-                        <input type=\"radio\" name=\"recipient\" value=\"me\">Me
-                        <br><input type=\"radio\" name=\"recipient\" value=\"mypartner\">My partner
-                        <input type=\"submit\" name=\"submit\" value=\"Submit\" class=\"login-button\">
-                        </form>";
-
-                    if(isset($_POST['recipient']))
-                    {
-                        if($_POST['recipient'] == "me")
-                        {
-                            $partnerisrecipient = 0;
-                        }
-                        else
-                        {
-                            $partnerisrecipient = 1;
-                        }
-
-                        $query="INSERT INTO posts (itemname,quantity,value,desireditem,desiredquantity,partnershipid,hasmatch,partnerisrecipient) 
-                        VALUES ('$itemname','$quantity','$value','$desireditem','$desiredquantity','$partnershipid','0','$partnerisrecipient')";
-                        
-                        $result=$conn->query($query);
-                        if ($result) // post created
-                        {
-                            echo "<div class='form'>
-                                <h3>Post created.</h3><br/>
-                                </div>";
-                        } 
-                        else // failed to create post
-                        {
-                            echo "<div class='form'>
-                                <h3>Failed to create post.</h3><br/>
-                                </div>";
-                        }
-                    }
                 }
                 else
                 {
                     $partnerisrecipient = 0;
                     $partnershipid = null;
+                }
 
-                    $query="INSERT INTO posts (itemname,quantity,value,desireditem,desiredquantity,partnershipid,hasmatch,partnerisrecipient) 
-                    VALUES ('$itemname','$quantity','$value','$desireditem','$desiredquantity','$partnershipid','0','$partnerisrecipient')";
-                    
-                    $result=$conn->query($query);
-                    if ($result) // post created
-                    {
-                        echo "<div class='form'>
-                            <h3>Post created.</h3><br/>
-                            </div>";
-                    } 
-                    else // failed to create post
-                    {
-                        echo "<div class='form'>
-                            <h3>Failed to create post.</h3><br/>
-                            </div>";
-                    }
+                $query="INSERT INTO posts (userid,itemname,quantity,value,desireditem,desiredquantity,partnershipid,partnerisrecipient) 
+                VALUES ('$userid','$itemname','$quantity','$value','$desireditem','$desiredquantity','$partnershipid','$partnerisrecipient')";
+                
+                $result=$conn->query($query);
+                if ($result) // post created
+                {
+                    echo "<div class='form'>
+                        <h3>Post created.</h3><br/>
+                        </div>";
+                } 
+                else // failed to create post
+                {
+                    echo "<div class='form'>
+                        <h3>Failed to create post.</h3><br/>
+                        </div>";
                 }
             }
 
