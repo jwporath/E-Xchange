@@ -52,7 +52,7 @@
         </form>
     
         <?php
-            if(isset($_REQUEST['username']))
+            if(isset($_REQUEST['partnername']))
             {
                 $partnername = stripslashes($_REQUEST['partnername']);
                 $partnername = mysqli_real_escape_string($conn, $partnername);
@@ -64,34 +64,39 @@
                 if($result->num_rows == 1)
                 {
                     $row = mysqli_fetch_assoc($result);
-                    $user2id =$row['userid'];
+                    $user2id =$row['UserID'];
 
-                    echo $user2id;
+                    $username = $_SESSION['username'];
+                    
+                    $query="SELECT * FROM users WHERE username='$username'";
+                    $result=$conn->query($query);
 
-                    $user1id ="";
+                    $row = mysqli_fetch_assoc($result);
+                    $user1id =$row['UserID'];
+
                     $query="INSERT INTO partnerships(user1id,user2id,confirmed) VALUES ($user1id,$user2id,TRUE);";
                     
                     $result=$conn->query($query);
                     if ($result) // partner added successfully
                     {
                         echo "<div class='form'>
-                            <h3>You are registered successfully.</h3><br/>
-                            <p class='link'>Click here to <a href='signin.php'>sign in.</a></p>
-                            </div>";
+                              <h3>Partnership added successfully.</h3><br/>
+                              <p class='link'>Click here to <a href='signin.php'>sign in.</a></p>
+                              </div>";
                     } 
                     else // partnership failed
                     {
                         echo "<div class='form'>
-                            <h3>Required fields are missing.</h3><br/>
-                            <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
-                            </div>";
+                              <h3>Required fields are missing.</h3><br/>
+                              <p class='link'>Click here to <a href='registration.php'>registration</a> again.</p>
+                              </div>";
                     }
                 }
                 else // partner's username does not exist
                 {
                     echo "<div class='form'>
-                        <h3>No accound exists with that username.</h3><br/>
-                        </div>";
+                          <h3>No accound exists with that username.</h3><br/>
+                          </div>";
                 }
             }
         ?>
