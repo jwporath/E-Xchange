@@ -46,7 +46,38 @@
         </ul>
     </div>
     <div class="main">
-        
+        <div class="boardPosts">
+            <br>
+            <table>
+                <tr>
+                    <th>Offering:</th>
+                    <th>Offered Quantity:</th>
+                    <th>Seeking:</th>
+                    <th>Desired Quantity:</th>
+                    <th>Value:</th>
+                </tr>
+                <?php
+                    $query="SELECT * FROM posts WHERE hasmatch='0'";
+                    $result=$conn->query($query);
+
+                    while($row = mysqli_fetch_assoc($result))
+                    {
+                        $itemname = $row['ItemName'];
+                        $quantity = $row['Quantity'];
+                        $desireditem = $row['DesiredItem'];
+                        $desiredquantity = $row['DesiredQuantity'];
+                        $value = $row['Value'];
+                        echo "<tr>
+                                <td>$itemname</td>
+                                <td>$quantity</td>
+                                <td>$desireditem</td>
+                                <td>$desiredquantity</td>
+                                <td>$$value</td>
+                              </tr>";
+                    }
+                ?>
+            </table>
+        </div>
     </div>
 </body>
 
