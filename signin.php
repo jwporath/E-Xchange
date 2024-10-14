@@ -17,12 +17,31 @@
 <body>
     <div class="sidebar">
         <p>E-XChange</p>
+        <?php
+            require('dbConnect.php');
+            session_start();
+            if(isset($_SESSION['username']))
+            {
+                echo "<h1>Welcome, ";
+                echo $_SESSION['username'];
+                echo "</h1>";
+            }
+        ?>
         <ul>
             <li><a href="index.php">Bulletin Board</a></li>
-            <li><a href="post.php">Create a Post</a></li>
-            <li><a href="partnership.php">Add a Partner</a></li>
-            <li><a href="signup.php">Sign Up</a></li>
-            <li><a href="signin.php">Sign In</a></li>
+            <?PHP
+                if(isset($_SESSION['username'])) // user is logged in
+                {
+                    echo "<li><a href=\"post.php\">Create a Post</a></li>
+                          <li><a href=\"partnership.php\">Add a Partner</a></li>
+                          <li><a href=\"logout.php\">Log Out</a></li>";
+                }
+                else // user is not logged in
+                {
+                    echo "<li><a href=\"signup.php\">Sign Up</a></li>
+                          <li><a href=\"signin.php\">Sign In</a></li>";
+                }
+            ?>
         </ul>
     </div>
     <div class="main">
@@ -34,9 +53,6 @@
             <p class="link"><a href="registration.php">New Registration</a></p>
         </form>
         <?php
-            require('dbConnect.php');
-            session_start();
-
             if(isset($_POST['username']))
             {
                 $username = stripslashes($_REQUEST['username']);
@@ -52,6 +68,7 @@
                     $_SESSION['username'] = $username;
                     echo "<div class='form'>
                           <h3>Sign in Successful.</h3><br/>";
+                    header("location: index.php");
                 } 
                 else 
                 {

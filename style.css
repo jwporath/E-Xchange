@@ -20,6 +20,19 @@
     color: #a8a8a8;
 }
 
+.sidebar h1 
+{
+    text-align: right;
+    font-family: "Bahnschrift";
+    padding-right: 20px;
+    padding-top: 0px;
+    margin-bottom: 20px;
+    font-size: 28px;
+    font-weight: bolder;
+    color: #a8a8a8;
+}
+
+
 .sidebar ul
 {
     list-style-type: none;
