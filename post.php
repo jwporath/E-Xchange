@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Welcome!</title>
+    <title>Create a Post | E-XChange</title>
     <link rel="stylesheet" href="style.css">
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
