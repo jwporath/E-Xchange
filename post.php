@@ -16,7 +16,7 @@
 
 <body>
     <div class="sidebar">
-        <p>E-XChange</p>
+        <img src="Logo.png" href="index.php">
         <?php
             require('dbConnect.php');
             include("auth_session.php");
