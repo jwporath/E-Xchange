@@ -50,7 +50,7 @@
             <input type="text" class="login-input" name="username" placeholder="Username" autofocus="true" required/>
             <input type="password" class="login-input" name="password" placeholder="Password" required/>
             <input type="submit" value="Submit" name="submit" class="login-button"/>
-            <p class="link"><a href="registration.php">New Registration</a></p>
+            <p class="link"><a href="signup.php">New Registration</a></p>
         </form>
         <?php
             if(isset($_POST['username']))
