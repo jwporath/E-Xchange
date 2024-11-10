@@ -169,6 +169,71 @@
                         <h3>Failed to create post.</h3><br/>
                         </div>";
                 }
+
+                // get postID
+                $query="SELECT * FROM Posts WHERE desireditem='$desireditem' AND itemname='$itemname' AND UserID='$userid' AND HasMatch='0'";
+                $result=$conn->query($query);
+                $row = mysqli_fetch_assoc($result);
+                $postid = $row['PostID'];
+
+                // check for compatible posts
+                $query="SELECT * FROM Posts 
+                WHERE desireditem='$itemname' AND itemname='$desireditem' 
+                AND quantity='$desiredquantity' AND desiredquantity='$quantity'
+                AND HasMatch='0'";
+                $MATCH_result=$conn->query($query);
+                if ($MATCH_result->num_rows > 0) // Compatible post found
+                {
+                    $i = 0;
+                    $numRows = $MATCH_result->num_rows;
+
+                    while($i < $numRows)
+                    {
+                        // get match info
+                        $row = mysqli_fetch_assoc($MATCH_result);
+                        $i++;
+                        $MATCH_PostID = $row['PostID'];
+                        $MATCH_Quantity = $row['Quantity'];
+                        $MATCH_DesiredQuantity = $row['DesiredQuantity'];
+                        $MATCH_Value = $row['Value'];
+
+                        // Compare post values
+                        $equivalence = ($value * $quantity) / ($MATCH_Value * $MATCH_Quantity);
+                        if($equivalence <= 1.1 && $equivalence >= 0.9) // within 10% value = valid transaction
+                        {
+                            // update posts "has match" 
+                            $query="UPDATE Posts SET HasMatch = '1' WHERE PostID = '$postid' OR PostID = '$MATCH_PostID';";
+                            $result=$conn->query($query);
+
+                            // create equivalence entry
+                            $query="INSERT INTO equivalence (Post1ID,Post2ID,Equivalence) 
+                            VALUES ('$postid','$MATCH_PostID','$equivalence')";
+                            $result=$conn->query($query);
+
+                            // get equivalenceID
+                            $query="SELECT EquivalenceID FROM equivalence WHERE Post1ID='$postid' AND Post2ID='$MATCH_PostID'";
+                            $result=$conn->query($query);
+                            $row = mysqli_fetch_assoc($result);
+                            $equivalenceID = $row['EquivalenceID'];
+
+                            // create hashes
+                            $leadinghalf = hash('crc32', $postid);
+                            $trailinghalf = hash('crc32', $MATCH_PostID);
+                            // $leadinghalf = $postid;
+                            // $trailinghalf = $MATCH_PostID;
+                            $hashkey = $leadinghalf;
+                            $hashkey .= $trailinghalf;
+
+                            // create transaction entry
+                            $query="INSERT INTO transactions (HashKey,LeadingHalf,TrailingHalf,Party1Received,Party2Received,EquivalenceID) 
+                            VALUES ('$hashkey','$leadinghalf','$trailinghalf','0','0','$equivalenceID')";
+                            $result=$conn->query($query);
+
+                            // break out of loop
+                            break;
+                        }
+                    }
+                }
             }
 
         ?>
