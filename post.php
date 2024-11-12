@@ -16,33 +16,10 @@
 
 <body>
     <div class="sidebar">
-        <img src="Logo.png" href="index.php">
         <?php
-            require('dbConnect.php');
-            include("auth_session.php");
-            if(isset($_SESSION['username']))
-            {
-                echo "<h1>Welcome, ";
-                echo $_SESSION['username'];
-                echo "</h1>";
-            }
+            include('sidebar.php');
+            require('auth_session.php');
         ?>
-        <ul>
-            <li><a href="index.php">Bulletin Board</a></li>
-            <?PHP
-                if(isset($_SESSION['username'])) // user is logged in
-                {
-                    echo "<li><a href=\"post.php\">Create a Post</a></li>
-                          <li><a href=\"partnership.php\">Add a Partner</a></li>
-                          <li><a href=\"logout.php\">Log Out</a></li>";
-                }
-                else // user is not logged in
-                {
-                    echo "<li><a href=\"signup.php\">Sign Up</a></li>
-                          <li><a href=\"signin.php\">Sign In</a></li>";
-                }
-            ?>
-        </ul>
     </div>
     <div class="main">
         <form class="form" action="" method="post">
