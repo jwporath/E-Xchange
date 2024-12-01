@@ -13,11 +13,20 @@
         <?PHP
             if(isset($_SESSION['username'])) // user is logged in
             {
-                echo "<li><a href=\"index.php\">Bulletin Board</a></li>
-                        <li><a href=\"myposts.php\">My Posts</a></li>
-                        <li><a href=\"post.php\">Create a Post</a></li>
-                        <li><a href=\"partnership.php\">Add a Partner</a></li>
-                        <li><a href=\"logout.php\">Log Out</a></li>";
+                if($_SESSION['username'] == "admin")
+                {
+                    echo "<li><a href=\"index.php\">Bulletin Board</a></li>
+                          <li><a href=\"admindashboard.php\">Admin Dashboard</a></li>
+                          <li><a href=\"logout.php\">Log Out</a></li>";
+                }
+                else
+                {
+                    echo "<li><a href=\"index.php\">Bulletin Board</a></li>
+                            <li><a href=\"myposts.php\">My Posts</a></li>
+                            <li><a href=\"post.php\">Create a Post</a></li>
+                            <li><a href=\"partnership.php\">Add a Partner</a></li>
+                            <li><a href=\"logout.php\">Log Out</a></li>";
+                }
             }
             else // user is not logged in
             {
