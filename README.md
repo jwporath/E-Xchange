@@ -23,7 +23,7 @@ the other.
    ```
 3. Start Apache and MySQL in XAMPP
 
-![alt text](<xampp start.gif>)
+![alt text](<Readme Images/xampp start.gif>)
 
 4. Import the database template using PHPMyAdmin. Do this by pressing "admin" next to MySQL in XAMPP. Then select "new" in the left sidebar to create a blank database. Name it "E-XChange". Finally, use the "Import" button along the top of the screen to import the template provided in the E-XChange Database Template folder of the repo.
 
