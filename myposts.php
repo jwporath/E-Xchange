@@ -146,7 +146,7 @@
                     <th>Desired Quantity:</th>
                     <th>Value:</th>
                     <th>Partner:</th>
-                    <th>Action:</th>
+                    <th>Status:</th>
                 </tr>
                 <?php
                     $Username = $_SESSION['username'];
@@ -167,7 +167,67 @@
                         $value = $row['Value'];
                         $totalValue = $value * $quantity;
 
-                        if($row['partnershipID'] != 0)
+                        // determine transaction status
+                        $PostID = $row['PostID'];
+                        $query="SELECT * FROM Equivalence WHERE Post1ID = '$PostID'";
+                        $result2=$conn->query($query);
+                        $rows2 = mysqli_num_rows($result2);
+
+                        $StatusMessage;
+
+                        if($rows2 > 0)
+                        {
+                            $IsPost1 = true;
+                            $row2 = mysqli_fetch_assoc($result2);
+                            $EquivalenceID = $row2['EquivalenceID'];
+                        }
+                        else
+                        {
+                            $IsPost1 = false;
+                            $query="SELECT * FROM Equivalence WHERE Post2ID = '$PostID'";
+                            $result2=$conn->query($query);
+                            $row2 = mysqli_fetch_assoc($result2);
+                            $EquivalenceID = $row2['EquivalenceID'];
+                        }
+
+                        $query="SELECT * FROM Transactions WHERE EquivalenceID = '$EquivalenceID'";
+                        $result2=$conn->query($query);
+                        $row2 = mysqli_fetch_assoc($result2);
+
+                        $Party1Received = $row2['Party1Received'];
+                        $Party2Received = $row2['Party2Received'];
+
+                        $LeadingHalf = $row2['LeadingHalf'];
+                        $TrailingHalf = $row2['TrailingHalf'];
+
+                        if($IsPost1 == true)
+                        {
+                            if($Party1Received == 0)
+                            {
+                                $StatusMessage = "Your code is:<b> $LeadingHalf</b><br>Please send your items to E-XChange with the code.";
+                            }
+                            else
+                            {
+                                $StatusMessage = "Waiting on other party's items to arrive.";
+                            }
+                        }
+                        else
+                        {
+                            if($Party2Received == 0)
+                            {
+                                $StatusMessage = "Your code is:<b> $TrailingHalf</b><br>Please send your items to E-XChange with the code.";
+                            }
+                            else
+                            {
+                                $StatusMessage = "Waiting on other party's items to arrive.";
+                            }
+                        }
+
+                        if($Party1Received != 0 && $Party2Received != 0) // do not display completed transactions
+                        {
+                            continue;
+                        }
+                        else if($row['partnershipID'] != 0)
                         {
                             // get partner name
                             $PartnershipID = $row['partnershipID'];
@@ -184,7 +244,7 @@
                                     <td>$desiredquantity</td>
                                     <td>$$totalValue</td>
                                     <td>$PartnerName</td>
-                                    <td></td>
+                                    <td>$StatusMessage</td>
                                 </tr>";
                         }
                         else
@@ -196,7 +256,7 @@
                                     <td>$desiredquantity</td>
                                     <td>$$totalValue</td>
                                     <td>N/A</td>
-                                    <td></td>
+                                    <td>$StatusMessage</td>
                                 </tr>";
                         }
                     }
